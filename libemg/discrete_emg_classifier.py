@@ -68,38 +68,27 @@ class OnlineEMGDiscreteClassifier:
         self.raw_data.reset_emg()
         while True:
             # Lets base everything off of EMG 
-            if len(self.raw_data.get_others()['EMG-bio']) >= 3600: #len(self.raw_data.get_others()['PPG-bio']) >= 90 and len(self.raw_data.get_others()['IMU-bio']) >=90 and len(self.raw_data.get_others()['PPG-bio']) >= 90:
+            if len(self.raw_data.get_others()['EMG-bio']) >= 3600 and len(self.raw_data.get_others()['IMU-bio']) >=180 and len(self.raw_data.get_others()['PPG-bio']) >= 180:
 
                 emg_data = np.array([self.raw_data.get_others()['EMG-bio'][-3600:]])
                 emg_data = self.normalize(emg_data, self.modalities['EMG']['mean'], self.modalities['EMG']['std'])
 
-                imu_data = np.array([self.raw_data.get_others()['IMU-bio'][-90:]])
+                imu_data = np.array([self.raw_data.get_others()['IMU-bio'][-180:]])
                 imu_data = self.normalize(imu_data, self.modalities['IMU']['mean'], self.modalities['IMU']['std'])
 
-                ppg_data = np.array([self.raw_data.get_others()['PPG-bio'][-90:]])
+                ppg_data = np.array([self.raw_data.get_others()['PPG-bio'][-180:]])
                 ppg_data = self.normalize(ppg_data, self.modalities['PPG']['mean'], self.modalities['PPG']['std'])
 
                 self.raw_data.adjust_increment_other('EMG-bio', 3600, 200)
-                self.raw_data.adjust_increment_other('IMU-bio', 90, 5)
-                self.raw_data.adjust_increment_other('PPG-bio', 90, 5)
+                self.raw_data.adjust_increment_other('IMU-bio', 180, 5)
+                self.raw_data.adjust_increment_other('PPG-bio', 180, 5)
 
-                emg_feats = self.get_features(fe, emg_data, 400, 200, ['RMS'])
-                imu_feats = self.get_features(fe, imu_data, 10, 5, ['RMS'])
-                ppg_feats = self.get_features(fe, ppg_data, 10, 5, ['RMS'])
+                emg_feats = self.get_features(fe, emg_data, 400, 100, ['RMS'])
+                imu_feats = self.get_features(fe, imu_data, 20, 5, ['RMS'])
+                ppg_feats = self.get_features(fe, ppg_data, 20, 5, ['RMS'])
 
                 preds = self.classifier.blip_detector.predict(emg=emg_feats) #, imu=imu_feats, ppg=ppg_feats)
                 print(preds)
-            
-            # if len(self.feats) == 300:
-            #     np.save('feats.npy', self.feats)
-            #     feats = []
-
-                # if self.classifier.blip_detector.predict(self.window_buffer[-18:]): #TODO: Update this 
-                #     print("Detected Gesture!")
-                    # # See if it is the correct gesture 
-                    # if self.classifier.gesture_recognizer.predict(self.window_buffer[-self.gesture_len:]):
-                    #     print("Wake Gesture Recognized!")
-
 
     def _get_data_helper(self):
         data = np.array(self.raw_data.get_emg())
