@@ -130,7 +130,7 @@ class SiFiBridgeStreamer:
                  emgfir_on=True,
                  emg_fir = [20, 450],
                  other=False,
-                 streaming=False):
+                 streaming=True):
         # notch_on refers to EMG notch filter
         # notch_freq refers to frequency cutoff of notch filter
         # 

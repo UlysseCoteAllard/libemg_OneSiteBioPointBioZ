@@ -198,7 +198,7 @@ class _SGTUI:
         self.start_training_button['state'] = 'disabled'
         # Error Checking - Waiting for ODH to start reading data
         while True:
-            if self.data_handler and len(self.data_handler.raw_data.get_emg()) > 0:
+            if self.data_handler and (len(self.data_handler.raw_data.get_emg()) > 0 or self.data_handler.raw_data.get_others()):
                 self.error_label.destroy()
                 self.start_training_button['state'] = 'normal'
                 break 

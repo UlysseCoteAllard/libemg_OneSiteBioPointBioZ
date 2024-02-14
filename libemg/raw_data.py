@@ -36,6 +36,11 @@ class RawData:
             self.emg_data = self.emg_data[-window:]
             self.emg_data = self.emg_data[increment:window]
 
+    def adjust_increment_other(self, other, window, increment):
+        with self.emg_lock:
+            self.other_modalities[other] = self.other_modalities[other][-window:]
+            self.other_modalities[other] = self.other_modalities[other][increment:window]
+
     def instantialize_other(self, other):
         self.other_modalities[other] = []
 
