@@ -68,12 +68,12 @@ class OnlineEMGDiscreteClassifier:
         self.raw_data.reset_emg()
         while True:
             # Lets base everything off of EMG 
-            if len(self.raw_data.get_others()['EMG-bio']) >= 3600: #and len(self.raw_data.get_others()['IMU-bio']) >=90 and len(self.raw_data.get_others()['PPG-bio']) >= 90:
+            if len(self.raw_data.get_others()['IMU-bio']) >=90 and len(self.raw_data.get_others()['EMG-bio']) >= 3600: # and len(self.raw_data.get_others()['PPG-bio']) >= 90:
 
                 emg_data = np.array([self.raw_data.get_others()['EMG-bio'][-3600:]])
                 emg_data = self.normalize(emg_data, self.modalities['EMG']['mean'], self.modalities['EMG']['std'])
 
-                imu_data = np.array([self.raw_data.get_others()['IMU-bio'][-90:]])
+                imu_data = np.array([np.array(self.raw_data.get_others()['IMU-bio'])[-90:, 0:3]])
                 imu_data = self.normalize(imu_data, self.modalities['IMU']['mean'], self.modalities['IMU']['std'])
 
                 ppg_data = np.array([self.raw_data.get_others()['PPG-bio'][-90:]])
@@ -84,10 +84,10 @@ class OnlineEMGDiscreteClassifier:
                 self.raw_data.adjust_increment_other('PPG-bio', 90, 5)
 
                 emg_feats = self.get_features(fe, emg_data, 400, 100, ['RMS'])
-                imu_feats = self.get_features(fe, imu_data, 10, 5, ['RMS'])
+                imu_feats = self.get_features(fe, imu_data, 10, 5, ['MEAN'])
                 ppg_feats = self.get_features(fe, ppg_data, 10, 5, ['RMS'])
 
-                preds = self.classifier.blip_detector.predict(emg=emg_feats) #, imu=imu_feats, ppg=ppg_feats)
+                preds = self.classifier.blip_detector.predict(imu=imu_feats) #, imu=imu_feats, ppg=ppg_feats)
                 print(preds)
 
     def _get_data_helper(self):
