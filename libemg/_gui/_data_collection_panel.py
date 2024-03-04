@@ -261,7 +261,7 @@ class DataCollectionPanel:
             progress = min(1,(time.perf_counter_ns() - motion_timer)/(1e9*timer_duration))
             dpg.set_value("__dc_progress", value = progress)        
     
-        def save_data(self, filename):
+    def save_data(self, filename):
         file_parts = filename.split('.')
         plt.figure(figsize=(10, 8))  # Adjust the figure size as needed
         subplot_index = 1
