@@ -211,4 +211,5 @@ class SiFiBridgeStreamer(Process):
         self.close()
         time.sleep(3)
         self.disconnect()
+        self.proc.kill()
     
